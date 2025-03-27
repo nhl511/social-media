@@ -5,13 +5,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/card.tsx";
-import { Button } from "./ui/button.tsx";
-import { Blog } from "../types.ts";
-import * as React from "react";
+} from "./ui/card";
 import { MessageSquareText, ThumbsUp } from "lucide-react";
-import { DialogTrigger } from "./ui/dialog.tsx";
-import { useBlog } from "../context/BlogContext.tsx";
+import { Button } from "./ui/button";
+import { Blog, Type } from "@/types";
+import { useDialog } from "@/context/DialogContext";
 
 const BlogCard: React.FC<Blog> = ({
   id,
@@ -24,7 +22,7 @@ const BlogCard: React.FC<Blog> = ({
   comments,
   content,
 }) => {
-  const { setBlog } = useBlog();
+  const { setDialogType } = useDialog();
   return (
     <Card className="">
       <CardHeader>
@@ -44,12 +42,44 @@ const BlogCard: React.FC<Blog> = ({
             {likeCount}
           </span>
           <span className="flex text-sm items-center gap-1">
-            <DialogTrigger>
-              <MessageSquareText
-                size={14}
-                className="cursor-pointer"
-                onClick={() =>
-                  setBlog({
+            <MessageSquareText
+              size={14}
+              className="cursor-pointer"
+              onClick={() =>
+                setDialogType({
+                  type: Type.blogCard,
+                  data: {
+                    blog: {
+                      id,
+                      title,
+                      description,
+                      imgUrl,
+                      createdAt,
+                      user,
+                      likeCount,
+                      comments,
+                      content,
+                    },
+                  },
+                })
+              }
+            />
+            {comments.commentCount}
+          </span>
+        </div>
+        <div className="flex gap-2 w-full border-t-1 pt-4">
+          <Button variant="outline" className="flex-1 cursor-pointer">
+            <ThumbsUp />
+            Thích
+          </Button>
+          <Button
+            variant="outline"
+            className="flex-1 cursor-pointer"
+            onClick={() =>
+              setDialogType({
+                type: Type.blogCard,
+                data: {
+                  blog: {
                     id,
                     title,
                     description,
@@ -59,40 +89,14 @@ const BlogCard: React.FC<Blog> = ({
                     likeCount,
                     comments,
                     content,
-                  })
-                }
-              />
-            </DialogTrigger>
-            {comments.commentCount}
-          </span>
-        </div>
-        <div className="flex gap-2 w-full border-t-1 pt-4">
-          <Button variant="outline" className="flex-1 cursor-pointer">
-            <ThumbsUp />
-            Thích
+                  },
+                },
+              })
+            }
+          >
+            <MessageSquareText />
+            Bình luận
           </Button>
-          <DialogTrigger className="flex-1">
-            <Button
-              variant="outline"
-              className="w-full cursor-pointer"
-              onClick={() =>
-                setBlog({
-                  id,
-                  title,
-                  description,
-                  imgUrl,
-                  createdAt,
-                  user,
-                  likeCount,
-                  comments,
-                  content,
-                })
-              }
-            >
-              <MessageSquareText />
-              Bình luận
-            </Button>
-          </DialogTrigger>
         </div>
       </CardFooter>
     </Card>
