@@ -5,6 +5,7 @@ import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import Navbar from "./components/Navbar.tsx";
 import DialogProvier from "./context/DialogContext.tsx";
+import AuthProvider from "./context/AuthContext.tsx";
 
 async function deferRender() {
   const { worker } = await import("./mocks/browser.ts");
@@ -15,12 +16,14 @@ deferRender().then(() => {
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <BrowserRouter>
-        <DialogProvier>
-          <Navbar />
-          <div className="container mx-auto mt-10">
-            <App />
-          </div>
-        </DialogProvier>
+        <AuthProvider>
+          <DialogProvier>
+            <Navbar />
+            <div className="container mx-auto mt-10">
+              <App />
+            </div>
+          </DialogProvier>
+        </AuthProvider>
       </BrowserRouter>
     </StrictMode>
   );

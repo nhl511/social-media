@@ -4,7 +4,6 @@ import NotFound from "./pages/NotFound.tsx";
 import BlogManagement from "./pages/BlogManagement.tsx";
 
 function App() {
-  console.log("hi");
   return (
     <Routes>
       <Route path="/" element={<Home />} />

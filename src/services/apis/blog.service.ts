@@ -1,7 +1,7 @@
-import {apiCaller} from "../../axios/client.ts";
-import {ENDPOINTS} from "./api-endpoints.service.ts";
+import { apiCaller } from "../../axios/client.ts";
+import { ENDPOINTS } from "./api-endpoints.service.ts";
 
-export const getAllBlogs = () => {
-    const data = apiCaller.get(ENDPOINTS.blogs.base)
-    return data
-}
+export const getAllBlogs = async () => {
+  const data = await apiCaller.get(ENDPOINTS.blogs.base);
+  return data;
+};

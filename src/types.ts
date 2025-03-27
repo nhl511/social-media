@@ -6,6 +6,13 @@ export interface NavbarItem {
 export interface User {
   id: number;
   name: string;
+  username: string;
+  password: string;
+}
+
+export interface Auth {
+  username: string;
+  password: string;
 }
 
 export interface Comment {
@@ -43,7 +50,20 @@ export interface DialogType {
 }
 
 export interface DialogContextType {
+  dialogType: DialogType | null;
   setDialogType: React.Dispatch<React.SetStateAction<DialogType | null>>;
+}
+
+export interface AuthContextType {
+  accessToken: string;
+  setAccessToken: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export interface ApiResponse {
+  success: boolean;
+  message: string;
+  data?: User;
+  accessToken?: string;
 }
 
 export enum Type {

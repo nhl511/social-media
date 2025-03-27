@@ -19,6 +19,8 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useDialog } from "@/context/DialogContext";
 import { Type } from "@/types";
+import { registerUser } from "@/services/apis/auth.service";
+import React from "react";
 
 const FormSchema = z.object({
   username: z.string(),
@@ -27,7 +29,7 @@ const FormSchema = z.object({
 });
 
 const RegisterModal = () => {
-  const { setDialogType } = useDialog();
+  const { dialogType, setDialogType } = useDialog();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -36,9 +38,23 @@ const RegisterModal = () => {
       repeatPassword: "",
     },
   });
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const result = await registerUser({
+      username: data?.username,
+      password: data?.password,
+    });
+
+    if (result.success) {
+      setDialogType({ type: Type.login });
+    }
   }
+
+  React.useEffect(() => {
+    if (dialogType?.type) {
+      form.reset();
+    }
+  }, [dialogType?.type, form]);
+
   return (
     <DialogContent className="sm:max-w-[425px]">
       <DialogHeader>
@@ -70,7 +86,11 @@ const RegisterModal = () => {
               <FormItem>
                 <FormLabel>Mật khẩu</FormLabel>
                 <FormControl>
-                  <Input placeholder="Nhập mật khẩu" {...field} />
+                  <Input
+                    placeholder="Nhập mật khẩu"
+                    {...field}
+                    type="password"
+                  />
                 </FormControl>
 
                 <FormMessage />
@@ -84,7 +104,11 @@ const RegisterModal = () => {
               <FormItem>
                 <FormLabel>Mật khẩu</FormLabel>
                 <FormControl>
-                  <Input placeholder="Nhập lại mật khẩu" {...field} />
+                  <Input
+                    placeholder="Nhập lại mật khẩu"
+                    {...field}
+                    type="password"
+                  />
                 </FormControl>
 
                 <FormMessage />

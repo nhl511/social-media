@@ -19,6 +19,9 @@ import {
 } from "./ui/form";
 import { useDialog } from "@/context/DialogContext";
 import { Type } from "@/types";
+import { loginUser } from "@/services/apis/auth.service";
+import { useAuth } from "@/context/AuthContext";
+import React from "react";
 
 const FormSchema = z.object({
   username: z.string(),
@@ -26,7 +29,8 @@ const FormSchema = z.object({
 });
 
 const LoginModal = () => {
-  const { setDialogType } = useDialog();
+  const { dialogType, setDialogType } = useDialog();
+  const { setAccessToken } = useAuth();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -35,9 +39,23 @@ const LoginModal = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const result = await loginUser({
+      username: data.username,
+      password: data.password,
+    });
+    if (result.success) {
+      setDialogType(null);
+      if (result.accessToken) setAccessToken(result.accessToken);
+      document.cookie = `accessToken=${result.accessToken}`;
+    }
   }
+
+  React.useEffect(() => {
+    if (dialogType?.type) {
+      form.reset();
+    }
+  }, [dialogType?.type, form]);
   return (
     <DialogContent className="sm:max-w-[425px]">
       <DialogHeader>
@@ -69,7 +87,11 @@ const LoginModal = () => {
               <FormItem>
                 <FormLabel>Mật khẩu</FormLabel>
                 <FormControl>
-                  <Input placeholder="Nhập mật khẩu" {...field} />
+                  <Input
+                    placeholder="Nhập mật khẩu"
+                    {...field}
+                    type="password"
+                  />
                 </FormControl>
 
                 <FormMessage />

@@ -10,7 +10,7 @@ const DialogContext = createContext<DialogContextType | null>(null);
 const DialogProvier = ({ children }: { children: React.ReactNode }) => {
   const [dialogType, setDialogType] = useState<DialogType | null>(null);
   return (
-    <DialogContext.Provider value={{ setDialogType }}>
+    <DialogContext.Provider value={{ dialogType, setDialogType }}>
       {children}
       <Dialog
         open={Type.login === dialogType?.type}
