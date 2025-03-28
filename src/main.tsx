@@ -6,25 +6,21 @@ import { BrowserRouter } from "react-router-dom";
 import Navbar from "./components/Navbar.tsx";
 import DialogProvier from "./context/DialogContext.tsx";
 import AuthProvider from "./context/AuthContext.tsx";
+import TriggerReloadProvider from "./context/TriggerReloadContext.tsx";
 
-async function deferRender() {
-  const { worker } = await import("./mocks/browser.ts");
-  return worker.start();
-}
-console.log("hi");
-deferRender().then(() => {
-  createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-      <BrowserRouter>
-        <AuthProvider>
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <TriggerReloadProvider>
           <DialogProvier>
             <Navbar />
             <div className="container mx-auto mt-10">
               <App />
             </div>
           </DialogProvier>
-        </AuthProvider>
-      </BrowserRouter>
-    </StrictMode>
-  );
-});
+        </TriggerReloadProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  </StrictMode>
+);

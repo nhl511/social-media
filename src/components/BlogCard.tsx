@@ -10,6 +10,8 @@ import { MessageSquareText, ThumbsUp } from "lucide-react";
 import { Button } from "./ui/button";
 import { Blog, Type } from "@/types";
 import { useDialog } from "@/context/DialogContext";
+import { useAuth } from "@/context/AuthContext";
+import moment from "moment";
 
 const BlogCard: React.FC<Blog> = ({
   id,
@@ -23,12 +25,13 @@ const BlogCard: React.FC<Blog> = ({
   content,
 }) => {
   const { setDialogType } = useDialog();
+  const { accessToken } = useAuth();
   return (
     <Card className="">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription className="text-xs">
-          {user.name} - {createdAt}
+          {user.name} - {moment(Number(createdAt)).fromNow()}
         </CardDescription>
         <CardDescription className="text-base">{description}</CardDescription>
       </CardHeader>
@@ -64,11 +67,21 @@ const BlogCard: React.FC<Blog> = ({
                 })
               }
             />
-            {comments.commentCount}
+            {comments ? comments.commentCount : 0}
           </span>
         </div>
         <div className="flex gap-2 w-full border-t-1 pt-4">
-          <Button variant="outline" className="flex-1 cursor-pointer">
+          <Button
+            variant="outline"
+            className="flex-1 cursor-pointer"
+            onClick={() => {
+              if (accessToken) {
+                console.log("like");
+              } else {
+                setDialogType({ type: Type.login });
+              }
+            }}
+          >
             <ThumbsUp />
             Thích
           </Button>

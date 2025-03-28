@@ -2,15 +2,22 @@ import React, { useState } from "react";
 
 import BlogCard from "@/components/BlogCard.tsx";
 import { Blog } from "@/types";
-import { getAllBlogs } from "@/services/apis/blog.service";
+import { getBlogs } from "@/db";
+import { useTriggerReload } from "@/context/TriggerReloadContext";
 
 const Blogs = () => {
-  const [blogs, setBlogs] = useState<any>([]);
+  const [blogs, setBlogs] = useState<Blog[] | []>([]);
+  const { reloadBlog, setReloadBlog } = useTriggerReload();
+
   React.useEffect(() => {
-    getAllBlogs().then((data) => {
-      setBlogs(data);
-    });
-  }, []);
+    loadBlogs();
+  }, [reloadBlog]);
+
+  const loadBlogs = async () => {
+    const data = await getBlogs();
+    setBlogs(data);
+    setReloadBlog(false);
+  };
   return (
     <div className="grid grid-cols-3 gap-4">
       {blogs.map((blog: Blog) => (

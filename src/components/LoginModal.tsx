@@ -19,9 +19,9 @@ import {
 } from "./ui/form";
 import { useDialog } from "@/context/DialogContext";
 import { Type } from "@/types";
-import { loginUser } from "@/services/apis/auth.service";
 import { useAuth } from "@/context/AuthContext";
 import React from "react";
+import { loginUser } from "@/db";
 
 const FormSchema = z.object({
   username: z.string(),
@@ -46,8 +46,8 @@ const LoginModal = () => {
     });
     if (result.success) {
       setDialogType(null);
-      if (result.accessToken) setAccessToken(result.accessToken);
-      document.cookie = `accessToken=${result.accessToken}`;
+      if (result.user) setAccessToken(JSON.stringify(result.user));
+      document.cookie = `accessToken=${JSON.stringify(result.user)}`;
     }
   }
 
@@ -99,7 +99,9 @@ const LoginModal = () => {
             )}
           />
           <DialogFooter className="flex !flex-col gap-4">
-            <Button type="submit">Đăng nhập</Button>
+            <Button type="submit" className="cursor-pointer">
+              Đăng nhập
+            </Button>
             <div className="flex justify-center gap-1">
               <p className="text-sm">Bạn chưa có tài khoản?</p>
               <p

@@ -1,12 +1,5 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import React from "react";
 import { z } from "zod";
-import {
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
 import {
   Form,
   FormControl,
@@ -15,40 +8,56 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import {
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { createBlog } from "@/db";
+import { useAuth } from "@/context/AuthContext";
 import { useDialog } from "@/context/DialogContext";
-import { Type } from "@/types";
-import React from "react";
-import { registerUser } from "@/db";
+import { useTriggerReload } from "@/context/TriggerReloadContext";
 
 const FormSchema = z.object({
-  username: z.string(),
-  password: z.string(),
-  name: z.string(),
-  repeatPassword: z.string(),
+  title: z.string(),
+  description: z.string(),
+  content: z.string(),
+  imgUrl: z.string(),
 });
 
-const RegisterModal = () => {
+const CreatePostModal = () => {
+  const { accessToken } = useAuth();
   const { dialogType, setDialogType } = useDialog();
+  const { setReloadBlog } = useTriggerReload();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: "",
-      password: "",
-      name: "",
-      repeatPassword: "",
+      title: "",
+      description: "",
+      content: "",
+      imgUrl: "",
     },
   });
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const result = await registerUser({
-      name: data.name,
-      username: data?.username,
-      password: data?.password,
-    });
 
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const result = await createBlog({
+      title: data.title,
+      description: data.description,
+      content: data.content,
+      imgUrl: data.imgUrl,
+      user: JSON.parse(accessToken).id,
+      comments: null,
+      likeCount: 0,
+      createdAt: Date.now().toString(),
+    });
     if (result) {
-      setDialogType({ type: Type.login });
+      setReloadBlog(true);
+      setDialogType(null);
     }
   }
 
@@ -61,7 +70,7 @@ const RegisterModal = () => {
   return (
     <DialogContent className="sm:max-w-[425px]">
       <DialogHeader>
-        <DialogTitle>Đăng ký</DialogTitle>
+        <DialogTitle>Tạo bài viết</DialogTitle>
       </DialogHeader>
       <Form {...form}>
         <form
@@ -70,12 +79,12 @@ const RegisterModal = () => {
         >
           <FormField
             control={form.control}
-            name="username"
+            name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tên đăng nhập</FormLabel>
+                <FormLabel>Tiêu đề</FormLabel>
                 <FormControl>
-                  <Input placeholder="Nhập tên đăng nhập" {...field} />
+                  <Input placeholder="Nhập tiêu đề" {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -84,12 +93,12 @@ const RegisterModal = () => {
           />
           <FormField
             control={form.control}
-            name="name"
+            name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tên</FormLabel>
+                <FormLabel>Mô tả</FormLabel>
                 <FormControl>
-                  <Input placeholder="Nhập tên" {...field} />
+                  <Input placeholder="Nhập mô tả" {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -98,16 +107,12 @@ const RegisterModal = () => {
           />
           <FormField
             control={form.control}
-            name="password"
+            name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Mật khẩu</FormLabel>
+                <FormLabel>Nội dung</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Nhập mật khẩu"
-                    {...field}
-                    type="password"
-                  />
+                  <Input placeholder="Nhập nội dung" {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -116,16 +121,12 @@ const RegisterModal = () => {
           />
           <FormField
             control={form.control}
-            name="repeatPassword"
+            name="imgUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Mật khẩu</FormLabel>
+                <FormLabel>Link ảnh</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Nhập lại mật khẩu"
-                    {...field}
-                    type="password"
-                  />
+                  <Input placeholder="Nhập link ảnh" {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -134,21 +135,8 @@ const RegisterModal = () => {
           />
           <DialogFooter className="flex !flex-col gap-4">
             <Button type="submit" className="cursor-pointer">
-              Đăng ký
+              Tạo bài viết
             </Button>
-            <div className="flex justify-center gap-1">
-              <p className="text-sm">Bạn đã có tài khoản?</p>
-              <p
-                className="text-sm font-bold cursor-pointer"
-                onClick={() =>
-                  setDialogType({
-                    type: Type.login,
-                  })
-                }
-              >
-                Đăng nhập
-              </p>
-            </div>
           </DialogFooter>
         </form>
       </Form>
@@ -156,4 +144,4 @@ const RegisterModal = () => {
   );
 };
 
-export default RegisterModal;
+export default CreatePostModal;

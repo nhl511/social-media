@@ -4,7 +4,7 @@ export interface NavbarItem {
 }
 
 export interface User {
-  id: number;
+  id?: number;
   name: string;
   username: string;
   password: string;
@@ -23,18 +23,18 @@ export interface Comment {
 }
 
 export interface Blog {
-  id: number;
+  id?: number;
   title: string;
   description: string;
   content: string;
   imgUrl: string;
-  createdAt: string;
   user: User;
   likeCount: number;
   comments: {
     commentList: Comment[];
     commentCount: number;
-  };
+  } | null;
+  createdAt: string;
 }
 
 export interface BlogContextType {
@@ -59,6 +59,11 @@ export interface AuthContextType {
   setAccessToken: React.Dispatch<React.SetStateAction<string>>;
 }
 
+export interface TriggerReloadContextType {
+  reloadBlog: boolean;
+  setReloadBlog: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 export interface ApiResponse {
   success: boolean;
   message: string;
@@ -70,4 +75,5 @@ export enum Type {
   login = "login",
   register = "register",
   blogCard = "blogCard",
+  createPost = "createPost",
 }

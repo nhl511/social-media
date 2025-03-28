@@ -1,4 +1,5 @@
 import BlogModal from "@/components/BlogModal";
+import CreatePostModal from "@/components/CreatePostModal";
 import LoginModal from "@/components/LoginModal";
 import RegisterModal from "@/components/RegisterModal";
 import { Dialog } from "@/components/ui/dialog";
@@ -23,6 +24,12 @@ const DialogProvier = ({ children }: { children: React.ReactNode }) => {
         onOpenChange={() => setDialogType(null)}
       >
         <RegisterModal />
+      </Dialog>
+      <Dialog
+        open={Type.createPost === dialogType?.type}
+        onOpenChange={() => setDialogType(null)}
+      >
+        <CreatePostModal />
       </Dialog>
       <Dialog
         open={Type.blogCard === dialogType?.type}

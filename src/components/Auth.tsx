@@ -1,8 +1,7 @@
 import { useDialog } from "@/context/DialogContext";
 import { Button } from "./ui/button";
-import { Type, User } from "@/types";
+import { Type } from "@/types";
 import { useAuth } from "@/context/AuthContext";
-import { jwtDecode } from "jwt-decode";
 import React from "react";
 import {
   DropdownMenu,
@@ -19,8 +18,7 @@ const Auth = () => {
 
   React.useEffect(() => {
     if (accessToken) {
-      const decoded = jwtDecode<User>(accessToken);
-      setName(decoded.name);
+      setName(JSON.parse(accessToken).name);
     }
   }, [accessToken]);
 

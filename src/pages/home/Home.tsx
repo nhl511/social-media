@@ -7,10 +7,30 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Blogs from "./components/Blogs";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { useDialog } from "@/context/DialogContext";
+import { Type } from "@/types";
+import { useAuth } from "@/context/AuthContext";
 
 const Home = () => {
+  const { setDialogType } = useDialog();
+  const { accessToken } = useAuth();
   return (
     <div className="flex flex-col gap-10 w-full">
+      <div>
+        <Button
+          className="cursor-pointer"
+          onClick={() =>
+            accessToken
+              ? setDialogType({ type: Type.createPost })
+              : setDialogType({ type: Type.login })
+          }
+        >
+          <Plus />
+          Tạo bài viết mới
+        </Button>
+      </div>
       <div className="flex justify-between">
         <div className="w-full flex gap-5">
           <div className="flex items-center gap-2">
